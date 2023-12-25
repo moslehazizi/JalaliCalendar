@@ -27,13 +27,16 @@ int daystoymd(int);
 int daystoymdForQ(int);
 long shamsiupload(int, int , int);
 int miladiupload(int, int, int);
-int qamariupload(int, int, int);
 int numberOfLeapsG(int);
 int lenofmonthG(int);
 bool isLeapG(int);
-
+int daysOfMonthQ(int);
 int alldaysinG(int, int, int);
 int numberOfLeapsFoConvert(int);
+int numberOfLeapsQ(int);
+bool isLeapQ(int);
+int numberOfLeapsGfromF(int, int);
+int daystoymdshFC(int);
 // End of conversion
 
 // Age section
@@ -223,6 +226,43 @@ int daystoymdsh(int days){
     int shDay = days + 1; // Days are 1-indexed
 
     printf("Your age is %d year and %d month and %d", shYear , shmMonth, shDay);
+}
+
+int daystoymdshFC(int days){
+
+    int daysInMonth[] = {31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29};
+    int shamsiYear = 1;
+
+    while (days > 365) {
+        if (isLeap(shamsiYear)) {
+            if (days >= 366) {
+                days -= 366;
+                shamsiYear++;
+            }
+        } else {
+            days -= 365;
+            shamsiYear++;
+        }
+    }
+
+    int shamsiMonth = 0;
+    while (days > daysInMonth[shamsiMonth]) {
+        if (shamsiMonth == 12 && (isLeap(shamsiYear))) {
+            if (days > 29) {
+                days -= 29;
+                shamsiMonth++;
+            }
+        } else {
+            days -= daysInMonth[shamsiMonth];
+            shamsiMonth++;
+        }
+    }
+
+    int shYear = shamsiYear;
+    int shmMonth = shamsiMonth;
+    int shDay = days; // Days are 1-indexed
+
+    printf("%d %d %d", shYear , shmMonth, shDay);
 }
 
 int monthDaysInbyear(int byear, int bmonth) {
@@ -646,7 +686,7 @@ void convert4(){
 
 }
 
-// This is not completed
+// This is convert qamaro to miladi
 void convert5(){
     int year , month , day;
     printf("[0] back to menu of conversion\n");
@@ -664,14 +704,14 @@ void convert5(){
     scanf("%d", &day);
     printf("**************************\n");
 
-    int days = qamariupload(year , month , day);
+    int days = ((year - 1) * 354) + daysOfMonthQ(month) + day + numberOfLeapsQ(year) + 227074 - 60 ;
 
     printf("\n");
 
     daystoymd(days);
 }
 
-// This is not completed
+// This is convert qamari to shamsi
 void convert6(){
     int year , month , day;
 
@@ -692,15 +732,79 @@ void convert6(){
     scanf("%d", &day);
     printf("**************************\n");
 
-    int days = qamariupload(year , month , day);
+    //int days = ((year - 1) * 354) + daysOfMonthQ(month) + day + numberOfLeapsQ(year) - 60;
+    //printf("\n");
+    //daystoymdshFC(days);
 
+    int qd = ((year - 1) * 354) + daysOfMonthQ(month) + day + numberOfLeapsQ(year) + 227074 - 60 ;
+    printf("\n");
+    //daystoymd(days);
+    int daysInMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    int gregorianYear = 1; // The Gregorian calendar starts from year 1
+
+    while (qd > 365) {
+        if (isLeapG(gregorianYear)) {
+            if (qd >= 366) {
+                qd -= 366;
+                gregorianYear++;
+            }
+        } else {
+            qd -= 365;
+            gregorianYear++;
+        }
+    }
+
+    int gregorianMonth = 0;
+    while (qd > daysInMonth[gregorianMonth]) {
+        if (gregorianMonth == 1 && (isLeapG(gregorianYear))) {
+            if (qd > 29) {
+                qd -= 29;
+                gregorianMonth++;
+            }
+        } else {
+            qd -= daysInMonth[gregorianMonth];
+            gregorianMonth++;
+        }
+    }
+
+    int Gyear = gregorianYear;
+    int Gmonth = gregorianMonth + 1; // Months are 1-indexed
+    int Gday = qd + 1; // Days are 1-indexed
+
+    long days;
+    long jm;
+    long jd;
+    {
+        long gy2 = (Gmonth > 2) ? (Gyear + 1) : Gyear;
+        long g_d_m[12] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
+        days = 355666 + (365 * Gyear) + ((int)((gy2 + 3) / 4)) - ((int)((gy2 + 99) / 100)) + ((int)((gy2 + 399) / 400)) + Gday + g_d_m[Gmonth - 1];
+    }
+    long jy = -1595 + (33 * ((int)(days / 12053)));
+    days %= 12053;
+    jy += 4 * ((int)(days / 1461));
+    days %= 1461;
+    if (days > 365) {
+        jy += (int)((days - 1) / 365);
+        days = (days - 1) % 365;
+    }
+    if (days < 186) {
+        jm = 1 + (int)(days / 31);
+        jd = 1 + (days % 31);
+    } else {
+        jm = 7 + (int)((days - 186) / 30);
+        jd = 1 + ((days - 186) % 30);
+    }
+
+    int jyear = jy;
+    int jmonth = jm;
+    int jday = jd - 2;
+    
     printf("\n");
 
-    daystoymd(days);
+    printf("%d %d %d", jyear , jmonth, jday);
 }
 
-
-// This is foo old method not accurate
+// This is for old method not accurate
 int daystoymdForQ(int days){
     int daysInQMonth[] = {30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29};
     int qamariYear = 1;
@@ -751,7 +855,7 @@ int daystoymd(int days){
     int gregorianYear = 1; // The Gregorian calendar starts from year 1
 
     while (days > 365) {
-        if ((gregorianYear % 4 == 0 && gregorianYear % 100 != 0) || (gregorianYear % 400 == 0)) {
+        if (isLeapG(gregorianYear)) {
             if (days >= 366) {
                 days -= 366;
                 gregorianYear++;
@@ -764,7 +868,7 @@ int daystoymd(int days){
 
     int gregorianMonth = 0;
     while (days > daysInMonth[gregorianMonth]) {
-        if (gregorianMonth == 1 && ((gregorianYear % 4 == 0 && gregorianYear % 100 != 0) || (gregorianYear % 400 == 0))) {
+        if (gregorianMonth == 1 && (isLeapG(gregorianYear))) {
             if (days > 29) {
                 days -= 29;
                 gregorianMonth++;
@@ -797,12 +901,6 @@ long shamsiupload(int year , int month , int day){
 // This is for old method, not used
 int miladiupload(int year , int month , int day){
     int days = (year) * 365 + lenofmonthG(month-1) + day + numberOfLeapsG(year) + ((year * 5.8)/24); //miladi
-    return days;
-}
-
-// This is for old method, not used yet
-int qamariupload(int year , int month, int day){
-    int days = (year) * 365 + month * lenofmonth(month, year) + day + numberOfLeaps(year) + ((year * 8.760)/24) + (year * 10.8); 
     return days;
 }
 
@@ -856,6 +954,20 @@ int numberOfLeapsG(int year){
     return counter;
 }
 
+int numberOfLeapsGfromF(int year, int fyear){
+
+    int i;
+    int counter = 0;
+    
+    for(i = fyear ; i <= year ; i++){
+        if(isLeapG(i)){
+            counter += 1;
+        }
+    }
+    
+    return counter;
+}
+
 // This is for old method, this func is for calculating number of all days in gregorian.
 int alldaysinG(int year, int month, int day){
     int days = shamsiupload(year , month , day) + (621 * 365);
@@ -875,4 +987,52 @@ int numberOfLeapsFoConvert(int year){
     }
     
     return counter;
+}
+
+int daysOfMonthQ(int month) {
+    if (month == 2) {
+        return 30;
+    } else if (month == 3){
+        return 30 + 29;
+    } else if (month == 4) {
+        return 30 + 29 + 30;
+    } else if (month == 5){
+        return 30 + 29 + 30 + 29;
+    } else if (month == 6){
+        return 30 + 29 + 30 + 29 + 30;
+    } else if (month == 7){
+        return 30 + 29 + 30 + 29 + 30 + 29;
+    } else if (month == 8){
+        return 30 + 29 + 30 + 29 + 30 + 29 + 30;
+    } else if (month == 9){
+        return 30 + 29 + 30 + 29 + 30 + 29 + 30 + 29;
+    } else if (month == 10){
+        return 30 + 29 + 30 + 29 + 30 + 29 + 30 + 29 + 30;
+    } else if (month == 11){
+        return 30 + 29 + 30 + 29 + 30 + 29 + 30 + 29 + 30 + 29;
+    } else if (month == 12){
+        return 30 + 29 + 30 + 29 + 30 + 29 + 30 + 29 + 30 + 29 + 30;
+    } 
+}
+
+int numberOfLeapsQ(int year){
+
+    int i;
+    int counter = 0;
+    
+    for(i = 0 ; i <= year ; i++){
+        if(isLeapQ(i)){
+            counter += 1;
+        }
+    }
+    
+    return counter;
+}
+
+bool isLeapQ(int year) {
+    if (year % 30 == 2 || year % 30 == 5 || year % 30 == 7 || year % 30 == 10 || year % 30 == 13 || year % 30 == 16 || year % 30 == 18 || year % 30 == 21 || year % 30 == 24 || year % 30 == 26 || year % 30 == 29){
+        return true;
+    } else {
+        return false;
+    }
 }
