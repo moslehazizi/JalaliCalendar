@@ -36,6 +36,15 @@ int alldaysinG(int, int, int);
 int numberOfLeapsFoConvert(int);
 // End of conversion
 
+// Age section
+int daysOfLeapYears(int, int);
+int daysInbyear(int , int, int);
+int monthDaysInyear(int);
+int monthDaysInbyear(int, int);
+int daystoymdsh(int);
+// End of Age section
+
+
 // Calendar
 int calendar(int , int);
 bool isLeap(int);
@@ -138,6 +147,7 @@ void option4() {
 }
 
 void option3(){
+
     system("cls");
     printf("[0] back to menu\n");
     printf("----------------\n");
@@ -146,13 +156,124 @@ void option3(){
     int month;
     int day;
 
-    printf("please enter your year of birth: \n");
-    printf("and the month of your birth: \n");
-    printf("and your birthday: \n");
+    int byear;
+    int bmonth;
+    int bday;
+    int daysToNow;
 
+    printf("please enter your year of birth: \n");
+    scanf("%d", &byear);
+
+    printf("and the month of your birth: \n");
+    scanf("%d", &bmonth);
+
+    printf("and your birthday: \n");
+    scanf("%d", &bday);
+
+    printf("Please enter today's date, first enter year: \n");
     scanf("%d", &year);
+
+    printf("Please enter today's date, second enter month: \n");
     scanf("%d", &month);
+
+    printf("Please enter today's date, third enter day: \n");
     scanf("%d", &day);
+
+    daysToNow = ((year - byear) * 365) + monthDaysInbyear(byear,bmonth) +  monthDaysInyear(month) + daysInbyear(byear, bmonth, bday) + day + daysOfLeapYears(year, byear);
+
+    daystoymdsh(daysToNow);
+    // int yearNum = (int)(daysToNow/365);
+    // int daysRemain = daysToNow%365;
+    // int monthNum = (int)(daysRemain/30);
+
+}
+
+int daystoymdsh(int days){
+
+    int daysInMonth[] = {31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29};
+    int shamsiYear = 1; // The Gregorian calendar starts from year 1
+
+    while (days > 365) {
+        if (isLeap(shamsiYear)) {
+            if (days >= 366) {
+                days -= 366;
+                shamsiYear++;
+            }
+        } else {
+            days -= 365;
+            shamsiYear++;
+        }
+    }
+
+    int shamsiMonth = 0;
+    while (days > daysInMonth[shamsiMonth]) {
+        if (shamsiMonth == 12 && (isLeap(shamsiYear))) {
+            if (days > 29) {
+                days -= 29;
+                shamsiMonth++;
+            }
+        } else {
+            days -= daysInMonth[shamsiMonth];
+            shamsiMonth++;
+        }
+    }
+
+    int shYear = shamsiYear - 2;
+    int shmMonth = shamsiMonth;
+    int shDay = days + 1; // Days are 1-indexed
+
+    printf("Your age is %d year and %d month and %d", shYear , shmMonth, shDay);
+}
+
+int monthDaysInbyear(int byear, int bmonth) {
+    if (bmonth < 6 && isLeap(byear)) {
+        return ((6-bmonth) * 31) + 180;
+    } else if (bmonth == 6 && isLeap(byear)) {
+        return 180;
+    } else if (bmonth < 6 && !(isLeap(byear))) {
+        return ((6-bmonth) * 31) + 179;
+    } else if (bmonth == 6 && !(isLeap(byear))) {
+        return 179;
+    } else if (bmonth > 6 && bmonth !=12 && isLeap(byear)) {
+        return ((11 - bmonth) * 30) + 30;
+    } else if (bmonth > 6 && bmonth !=12 && !(isLeap(byear))) {
+        return ((11 - bmonth) * 30) + 29;
+    } else if (bmonth > 6 && bmonth ==12) {
+        return 0;
+    }
+}
+
+int monthDaysInyear(int month){
+    if (month <= 6) {
+        return ((month - 1) * 31);
+    } else if (month > 6) {
+        return (((month - 7) * 30) + 186);
+    }
+}
+
+int daysInbyear(int byear, int bmonth, int bday){
+    if (bmonth <= 6){
+        return 31 - bday;
+    } else if (bmonth > 6 && bmonth < 12) {
+        return 30 - bday;
+    } else if (bmonth == 12 && !(isLeap(byear))){
+        return 29 - bday;
+    } else if (bmonth == 12 && (isLeap(byear))){
+        return 30 - bday;
+    }
+}
+
+int daysOfLeapYears(int year, int byear) {
+    int i;
+    int counter = 0;
+    
+    for(i = byear ; i < year ; i++){
+        if(isLeap(i)){
+            counter += 1;
+        }
+    }
+    
+    return counter;
 }
 
 void option2() {
